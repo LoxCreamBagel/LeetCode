@@ -7,7 +7,7 @@
     const EXCEPTION_NUMERALS = ["IV", "IX", "XL", "XC", "CD", "CM"];
     
     // 1 <= s.length <= 15
-    // if (s.length < 1 || s.length > 15) return 0;
+    if (s.length < 1 || s.length > 15) return -1;
     
     // create a running sum based on the math of the prior 2 characters seen
     let sum = 0;
@@ -17,6 +17,8 @@
     for (var i = 0; i < s.length ; i++) {
         let nextS = s[i];
         
+        if (!nextS) return -1;
+
         if (EXCEPTION_NUMERALS.includes(priorS+nextS)) {
             sum += ROMAN_NUMERALS[nextS] - ROMAN_NUMERALS[priorS];
             priorS = "";
