@@ -22,7 +22,7 @@
     do {
         palindrome = palindrome && (node.val === stack.pop());
         node = node.next;
-    } while (node && palindrome);1
+    } while (node && palindrome);
     
     return palindrome;
 };
