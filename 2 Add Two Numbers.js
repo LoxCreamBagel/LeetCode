@@ -16,25 +16,31 @@
  * @return {ListNode}
  */
  var addTwoNumbers = function (l1, l2) {
-    let sum = linkedListToNumber(l1) + linkedListToNumber(l2);
-    return arrayToLinkedList([...`${sum}`]);
-};
+    let carry = 0;
+    let node1 = l1;
+    let node2 = l2;
+    const tempHead = new ListNode(-1, null);
+    let pNode = tempHead;
 
-var linkedListToNumber = function (head) {
-    let sum = 0;
-    let p = 0;
-    let node = head;
     do {
-        sum += node.val * Math.pow(10, p);
-        node = node.next
-        p++;
-    } while (node);
-    return sum;
-}
+        let num1 = node1?.val ?? 0;
+        let num2 = node2?.val ?? 0;
 
-var arrayToLinkedList = function(list) {
-    return list.reduce((head, val) => {
-        const stack = new ListNode(val, head);
-        return stack;
-    }, null);
-}
+       
+        let sum = num1 + num2 + carry;
+        
+        if ((sum / 10) >= 1) {
+            carry = 1;
+            sum = sum % 10;
+        } else {
+            carry = 0;
+        }
+
+        pNode.next = new ListNode(sum, null);
+        pNode = pNode.next;
+        node1 = node1?.next ?? null;
+        node2 = node2?.next ?? null;
+    } while (node1?.val !== undefined || node2?.val !== undefined || carry);
+
+    return tempHead.next;
+};
