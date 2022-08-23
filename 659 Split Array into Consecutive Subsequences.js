@@ -1,53 +1,78 @@
 /**
+ * is it possible to seperate the given array of numbers into subsqeuences with the following params:
+ *      All Subsequence must be at least length 3
+ *      All Subsequence itmes must ascend by 1 each index
  * @param {number[]} nums
  * @return {boolean}
+
  */
  var isPossible = function(nums) {
-    if (nums.length < 3) 
-        return false;
+    if (!nums || nums.length < 3) return false;
+
+    const subseq = [];
+    let lowestSeq = 0;
     
-    let groups = [];
-    let lowestSubI = 0;
-    let highestSubI = 0;
-    
-    // Scenario 1, increasing numbers, no repeates
-    for(let i=0; i<nums.length;i++) {
-        let placed = false;
-        let gi = lowestSubI;
+    for (let i=0; i < nums.length; i++) {
+        const val = nums[i];
+        let maxSeqIndex = subseq.length - 1;
+        let seq = lowestSeq;
+
         
+        let placed = false;
         do {
-            // bucket is empty
-            if (!groups[gi]?.length) {
-                groups[gi] = [nums[i]];
+            // There is no subsequences in progress at this index
+            if (!subseq[seq]) {
+                subseq.push([val]);
                 placed = true;
-            }
-            
-            // Same number, move to next bucket and try again
-            else if (nums[i] - groups[gi].at(-1) === 0) {
-                gi += 1;
             }
 
-            // 1 more than current bucket, add to subsqeuence
-            else if (nums[i] - groups[gi].at(-1) === 1) {
-                groups[gi].push(nums[i]);
-                placed = true;
-            }    
-        
-            // number too large for subsequence    
-            else if (nums[i] - groups[gi].at(-1) > 1) {
-                // Current sequence is too short!
-                if (groups[gi].length < 3) {
-                    return false;
+            // This is a duplicate number. Try the next subsequence
+            else if ((val - subseq[seq].slice(-1).pop()) === 0) {
+                seq += 1;
+            }
+
+            // This value is valid for this subsequence
+            else if ((val - subseq[seq].slice(-1).pop()) === 1) {
+                // If there are no subsequences after this or the length is too short, place it
+                if (subseq[seq].length < 3 || seq === maxSeqIndex) {
+                    subseq[seq].push(val);
+                    placed = true;
+                }
+
+                // there is at least 1 subsequence after this one
+                else {
+                    // check if the subsequences after this one, need the value
+                    let countback = maxSeqIndex;
+                    while (countback >= seq && !placed) {
+                        // A future sequence needed this
+                        if ((val - subseq[countback].slice(-1).pop()) === 1) {
+                            subseq[countback].push(val);
+                            placed = true;
+                        } else {
+                            // Future didn't need, check next moving backwards
+                            countback -= 1;
+                        }
+                    }
                 }
                 
-                // re-adjust our lowest staring subsequence and keep trying to place
-                else {
-                    gi += 1;
-                    lowestSubI = gi;
+            }
+
+            // This value is too large to be placed in the current subsequence
+            else if ((val - subseq[seq].slice(-1).pop()) > 1) {
+
+                // fast fail if the subsequence is not long enough to meet requirements
+                if (subseq[seq].length < 3) {
+                    return false;
                 }
+                // Try the next subsequence
+                // set the lowest possible subsequence to the next subsequence
+                else {
+                    seq += 1;
+                    lowestSeq = seq;
+                } 
             }
         } while (!placed);
-    }
-    
-    return (groups.findIndex(group => group.length < 3) === -1);
+    } 
+
+    return (subseq.findIndex(sequence => sequence.length < 3) === -1);
 };
