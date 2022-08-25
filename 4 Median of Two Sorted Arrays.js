@@ -14,7 +14,7 @@
  * @param {number[]} nums2
  * @return {number}
  */
-var findMedianSortedArrays = function (nums1, nums2) {
+ var findMedianSortedArrays = function (nums1, nums2) {
   const totalLength = nums1.length + nums2.length;
   if (totalLength < 1)
     throw Error("arrays too short < 0");
@@ -36,7 +36,7 @@ var findMedianSortedArrays = function (nums1, nums2) {
   // all of 1 list is less than the other list
   if (n[n.length-1] <= m[0]) {
     return stackedListMedian(n, m)
-  } else if (m[m.length] <= n[0]) {
+  } else if (m[m.length-1] <= n[0]) {
     return stackedListMedian(m, n);
   }    
   
@@ -65,8 +65,9 @@ var findMedianSortedArrays = function (nums1, nums2) {
       n = n.slice(0, i+1);
       m = m.slice(j, m.length);
     }
-  } while (n.length + m.length > 2);
-
+  } while (false);
+    
+    return -1;
 };
 
 // Only 1 list
@@ -77,7 +78,7 @@ const listMedian = function(n) {
 
 // all of 1 list is less than the other list
 const stackedListMedian = function (lower, upper) {
-  const totalLength = lower + upper;
+  const totalLength = lower.length + upper.length;
   const k = Math.floor((totalLength-1)/2), l = Math.ceil((totalLength-1)/2);
 
   let lowerMedian = (k < lower.length) ? lower[k] : upper[k - lower.length];
